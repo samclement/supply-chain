@@ -1,15 +1,14 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { ChevronDown, ChevronRight, ArrowRight, ArrowDown, GitBranch } from 'lucide-react';
 import DataManager from './DataManager.jsx';
-import MapView from './MapView.jsx';
-import NodeCard from './NodeCard.jsx';
-import BusinessProcessFlow from './BusinessProcessFlow.jsx';
-import MapLegend from './MapLegend.jsx';
-import SystemCard from './SystemCard.jsx';
-import TeamCard from './TeamCard.jsx';
 import Header from './Header.jsx';
 import FilterPanel from './FilterPanel.jsx';
 import SummaryStats from './SummaryStats.jsx';
+import LogicalView from './pages/LogicalView.jsx';
+import PhysicalView from './pages/PhysicalView.jsx';
+import SystemsView from './pages/SystemsView.jsx';
+import TeamsView from './pages/TeamsView.jsx';
+import NodeCard from './NodeCard.jsx';
 import { tempColors, nodeStyles } from './styles.js';
 import dataManager from './dataManager.js';
 
@@ -95,174 +94,6 @@ export default function SupplyChainUI() {
   );
 
 
-  // Logical view - grouped by type
-  const LogicalView = () => {
-    const groupedNodes = {
-      supplier: visibleNodes.filter(n => n.type === 'supplier'),
-      ndc: visibleNodes.filter(n => n.type === 'ndc'),
-      primary: visibleNodes.filter(n => n.type === 'primary'),
-      rdc: visibleNodes.filter(n => n.type === 'rdc'),
-      store: visibleNodes.filter(n => n.type === 'store'),
-    };
-
-    return (
-      <div className="space-y-6">
-        {/* Flow diagram */}
-        <div className="flex items-start gap-4 overflow-x-auto pb-4">
-          {Object.entries(groupedNodes).map(([type, nodes], groupIdx) => (
-            <React.Fragment key={type}>
-              <div className="flex-shrink-0 min-w-[200px]">
-                <div className={`text-xs uppercase tracking-wider mb-3 ${nodeStyles[type].border.replace('border-', 'text-').replace('/60', '')} font-semibold`}>
-                  {nodeStyles[type].label}s ({nodes.length})
-                </div>
-                <div className="space-y-3">
-                  {nodes.map(node => (
-                    <NodeCard
-                      key={node.id}
-                      node={{
-                        ...node,
-                        isSelected: selectedNode?.id === node.id,
-                        onSelect: () => setSelectedNode(selectedNode?.id === node.id ? null : node)
-                      }}
-                      zoomLevel={zoomLevel}
-                      showLayers={showLayers}
-                      teamsData={supplyChainData.teams}
-                    />
-                  ))}
-                </div>
-              </div>
-              {groupIdx < Object.keys(groupedNodes).length - 1 && (
-                <div className="flex-shrink-0 flex flex-col items-center justify-center pt-8">
-                  <ArrowRight className="w-8 h-8 text-slate-600" />
-                  <div className="text-xs text-slate-600 mt-1">Flow</div>
-                </div>
-              )}
-            </React.Fragment>
-          ))}
-        </div>
-
-        {/* Business processes */}
-        {showLayers.businessProcess && (
-          <div className="space-y-3">
-            <div className="text-sm font-semibold text-slate-300 flex items-center gap-2">
-              <GitBranch className="w-4 h-4" />
-              Business Processes
-            </div>
-            {Object.entries(supplyChainData.businessProcesses).map(([key, process]) => (
-              <BusinessProcessFlow
-                key={key}
-                process={process}
-                expanded={expandedProcess === key}
-                onToggle={() => setExpandedProcess(expandedProcess === key ? null : key)}
-                showLayers={showLayers}
-                teamsData={supplyChainData.teams}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  // Physical view - map-based using OpenStreetMap
-  const PhysicalView = () => {
-    return (
-      <div className="space-y-4">
-        {/* Interactive Map */}
-        <div className="bg-slate-900/60 rounded-lg border border-slate-700/50 overflow-hidden">
-          <MapView
-            visibleNodes={visibleNodes}
-            selectedNode={selectedNode}
-            onSelectNode={setSelectedNode}
-          />
-        </div>
-
-        {/* Legend */}
-        <MapLegend visibleNodes={visibleNodes} />
-
-        {/* Detailed View */}
-        <div className="bg-slate-900/60 rounded-lg border border-slate-700/50 p-4">
-          <div className="text-sm font-semibold text-slate-300 mb-3">Cities & Locations</div>
-          <div className="grid grid-cols-2 gap-4">
-            {['Scotland', 'North', 'Midlands', 'South'].map(region => {
-              const locations = {
-                'Scotland': ['Glasgow', 'Edinburgh'],
-                'North': ['Manchester', 'Leeds', 'Sheffield', 'Doncaster'],
-                'Midlands': ['Birmingham', 'Nottingham'],
-                'South': ['Milton Keynes', 'Reading', 'Bristol'],
-              };
-              return (
-                <div key={region}>
-                  <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{region}</div>
-                  <div className="space-y-2">
-                    {locations[region].map(city => {
-                      const nodesInCity = visibleNodes.filter(n => n.location === city);
-                      if (nodesInCity.length === 0) return null;
-                      return (
-                        <div key={city} className="pl-3 border-l-2 border-slate-700 text-xs">
-                          <div className="text-slate-300 font-medium mb-1">{city}</div>
-                          <div className="space-y-1">
-                            {nodesInCity.map(node => (
-                              <div key={node.id} className="text-slate-500 text-xs">{node.name}</div>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // Systems view
-  const SystemsView = () => {
-    const allSystems = [...new Set(supplyChainData.nodes.flatMap(n => n.systems))];
-
-    return (
-      <div className="grid grid-cols-3 gap-4">
-        {allSystems.map(system => {
-          const nodesWithSystem = visibleNodes.filter(n => n.systems.includes(system));
-          const team = supplyChainData.teams[system];
-
-          return (
-            <SystemCard
-              key={system}
-              system={system}
-              team={team}
-              nodesWithSystem={nodesWithSystem}
-            />
-          );
-        })}
-      </div>
-    );
-  };
-
-  // Teams view
-  const TeamsView = () => {
-    return (
-      <div className="grid grid-cols-2 gap-4">
-        {Object.entries(supplyChainData.teams).map(([system, team]) => {
-          const nodesWithSystem = visibleNodes.filter(n => n.systems.includes(system));
-
-          return (
-            <TeamCard
-              key={system}
-              teamName={team.name}
-              team={team}
-              system={system}
-              nodesWithSystem={nodesWithSystem}
-            />
-          );
-        })}
-      </div>
-    );
-  };
-
   if (!supplyChainData) {
     return (
       <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center" style={{ fontFamily: "'JetBrains Mono', 'Fira Code', monospace" }}>
@@ -306,10 +137,37 @@ export default function SupplyChainUI() {
             />
 
             {/* Active view content */}
-            {activeView === 'logical' && <LogicalView />}
-            {activeView === 'physical' && <PhysicalView />}
-            {activeView === 'systems' && <SystemsView />}
-            {activeView === 'teams' && <TeamsView />}
+            {activeView === 'logical' && (
+              <LogicalView
+                visibleNodes={visibleNodes}
+                selectedNode={selectedNode}
+                onSelectNode={setSelectedNode}
+                supplyChainData={supplyChainData}
+                zoomLevel={zoomLevel}
+                showLayers={showLayers}
+                expandedProcess={expandedProcess}
+                onToggleProcess={setExpandedProcess}
+              />
+            )}
+            {activeView === 'physical' && (
+              <PhysicalView
+                visibleNodes={visibleNodes}
+                selectedNode={selectedNode}
+                onSelectNode={setSelectedNode}
+              />
+            )}
+            {activeView === 'systems' && (
+              <SystemsView
+                visibleNodes={visibleNodes}
+                supplyChainData={supplyChainData}
+              />
+            )}
+            {activeView === 'teams' && (
+              <TeamsView
+                visibleNodes={visibleNodes}
+                supplyChainData={supplyChainData}
+              />
+            )}
           </div>
         </main>
 
