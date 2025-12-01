@@ -1,30 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { ChevronDown, ChevronRight, Filter, Layers, Map, GitBranch, Users, Cpu, Eye, EyeOff, ZoomIn, ZoomOut, Box, Truck, Store, Building2, Snowflake, Thermometer, Sun, ArrowRight, ArrowDown, Database, RefreshCw, Edit3 } from 'lucide-react';
+import { ChevronDown, ChevronRight, Filter, Layers, Map, GitBranch, Users, Cpu, Eye, EyeOff, ZoomIn, ZoomOut, ArrowRight, ArrowDown, Edit3 } from 'lucide-react';
 import DataManager from './DataManager.jsx';
 import MapView from './MapView.jsx';
+import NodeCard from './NodeCard.jsx';
+import BusinessProcessFlow from './BusinessProcessFlow.jsx';
+import { tempColors, nodeStyles, operatorColors } from './styles.js';
 import dataManager from './dataManager.js';
-
-// Temperature styling
-const tempColors = {
-  ambient: { bg: 'bg-amber-500/20', border: 'border-amber-500', text: 'text-amber-400', icon: Sun },
-  chilled: { bg: 'bg-cyan-500/20', border: 'border-cyan-500', text: 'text-cyan-400', icon: Thermometer },
-  frozen: { bg: 'bg-blue-500/20', border: 'border-blue-500', text: 'text-blue-400', icon: Snowflake },
-};
-
-// Node type styling
-const nodeStyles = {
-  supplier: { bg: 'bg-emerald-900/40', border: 'border-emerald-500/60', icon: Building2, label: 'Supplier' },
-  ndc: { bg: 'bg-violet-900/40', border: 'border-violet-500/60', icon: Box, label: 'NDC' },
-  primary: { bg: 'bg-rose-900/40', border: 'border-rose-500/60', icon: RefreshCw, label: 'Primary' },
-  rdc: { bg: 'bg-orange-900/40', border: 'border-orange-500/60', icon: Truck, label: 'RDC' },
-  store: { bg: 'bg-sky-900/40', border: 'border-sky-500/60', icon: Store, label: 'Store' },
-};
-
-// Operator styling
-const operatorColors = {
-  'Company A': 'ring-2 ring-green-500/50',
-  'Company B': 'ring-2 ring-purple-500/50',
-};
 
 export default function SupplyChainUI() {
   const [supplyChainData, setSupplyChainData] = useState(null);
@@ -107,152 +88,6 @@ export default function SupplyChainUI() {
     </button>
   );
 
-  const NodeCard = ({ node, compact = false }) => {
-    const style = nodeStyles[node.type];
-    const Icon = style.icon;
-    const isSelected = selectedNode?.id === node.id;
-    
-    return (
-      <div
-        onClick={() => setSelectedNode(isSelected ? null : node)}
-        className={`
-          ${style.bg} ${style.border} border rounded-lg p-3 cursor-pointer transition-all
-          ${node.operator ? operatorColors[node.operator] : ''}
-          ${isSelected ? 'ring-2 ring-white/50 shadow-lg shadow-white/10' : 'hover:brightness-110'}
-          ${compact ? 'p-2' : ''}
-        `}
-        style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'top left' }}
-      >
-        <div className="flex items-start gap-2">
-          <Icon className={`w-4 h-4 ${style.border.replace('border-', 'text-').replace('/60', '')}`} />
-          <div className="flex-1 min-w-0">
-            <div className="text-xs text-slate-400 uppercase tracking-wide">{style.label}</div>
-            <div className="text-sm font-medium text-white truncate">{node.name}</div>
-            {!compact && <div className="text-xs text-slate-500">{node.location}</div>}
-          </div>
-        </div>
-        
-        {/* Temperature badges */}
-        <div className="flex gap-1 mt-2 flex-wrap">
-          {node.temp.map(t => {
-            const tc = tempColors[t];
-            const TempIcon = tc.icon;
-            return (
-              <span key={t} className={`${tc.bg} ${tc.text} px-1.5 py-0.5 rounded text-xs flex items-center gap-1`}>
-                <TempIcon className="w-3 h-3" />
-                {t}
-              </span>
-            );
-          })}
-        </div>
-
-        {/* Systems layer */}
-        {showLayers.systems && !compact && (
-          <div className="mt-2 pt-2 border-t border-slate-700/50">
-            <div className="text-xs text-slate-500 mb-1 flex items-center gap-1">
-              <Cpu className="w-3 h-3" /> Systems
-            </div>
-            <div className="flex flex-wrap gap-1">
-              {node.systems.map(sys => (
-                <span key={sys} className="bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded text-xs">
-                  {sys}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Teams layer */}
-        {showLayers.teams && !compact && (
-          <div className="mt-2 pt-2 border-t border-slate-700/50">
-            <div className="text-xs text-slate-500 mb-1 flex items-center gap-1">
-              <Users className="w-3 h-3" /> Teams
-            </div>
-            <div className="flex flex-wrap gap-1">
-              {[...new Set(node.systems.map(s => supplyChainData.teams[s]?.name).filter(Boolean))].map(team => (
-                <span key={team} className="bg-indigo-900/40 text-indigo-300 px-1.5 py-0.5 rounded text-xs">
-                  {team}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {node.operator && (
-          <div className="mt-2 text-xs text-slate-500">
-            Operator: <span className={node.operator === 'Company A' ? 'text-green-400' : 'text-purple-400'}>{node.operator}</span>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const BusinessProcessFlow = ({ process, expanded, onToggle }) => {
-    return (
-      <div className="bg-slate-900/60 rounded-lg border border-slate-700/50 overflow-hidden">
-        <button
-          onClick={onToggle}
-          className="w-full px-4 py-3 flex items-center justify-between hover:bg-slate-800/50 transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <GitBranch className="w-4 h-4 text-slate-400" />
-            <span className="font-medium text-white">{process.name}</span>
-            <span className="text-xs text-slate-500 bg-slate-800 px-2 py-0.5 rounded">
-              {process.steps.length} steps
-            </span>
-          </div>
-          {expanded ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
-        </button>
-        
-        {expanded && (
-          <div className="px-4 pb-4">
-            <div className="relative">
-              {process.steps.map((step, idx) => (
-                <div key={step.id} className="flex items-start gap-3 relative">
-                  {/* Connector line */}
-                  {idx < process.steps.length - 1 && (
-                    <div className="absolute left-[11px] top-6 w-0.5 h-full bg-slate-700" />
-                  )}
-                  
-                  {/* Step dot */}
-                  <div className="w-6 h-6 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center text-xs text-slate-400 z-10 flex-shrink-0">
-                    {idx + 1}
-                  </div>
-                  
-                  <div className="flex-1 pb-4">
-                    <div className="text-sm font-medium text-white">{step.name}</div>
-                    <div className="text-xs text-slate-500 mt-0.5">{step.description}</div>
-                    
-                    {showLayers.systems && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {step.systems.map(sys => (
-                          <span key={sys} className="bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded text-xs flex items-center gap-1">
-                            <Database className="w-3 h-3" />
-                            {sys}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    
-                    {showLayers.teams && (
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {[...new Set(step.systems.map(s => supplyChainData.teams[s]?.name).filter(Boolean))].map(team => (
-                          <span key={team} className="bg-indigo-900/40 text-indigo-300 px-1.5 py-0.5 rounded text-xs flex items-center gap-1">
-                            <Users className="w-3 h-3" />
-                            {team}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
 
   // Logical view - grouped by type
   const LogicalView = () => {
@@ -276,7 +111,17 @@ export default function SupplyChainUI() {
                 </div>
                 <div className="space-y-3">
                   {nodes.map(node => (
-                    <NodeCard key={node.id} node={node} />
+                    <NodeCard
+                      key={node.id}
+                      node={{
+                        ...node,
+                        isSelected: selectedNode?.id === node.id,
+                        onSelect: () => setSelectedNode(selectedNode?.id === node.id ? null : node)
+                      }}
+                      zoomLevel={zoomLevel}
+                      showLayers={showLayers}
+                      teamsData={supplyChainData.teams}
+                    />
                   ))}
                 </div>
               </div>
@@ -303,6 +148,8 @@ export default function SupplyChainUI() {
                 process={process}
                 expanded={expandedProcess === key}
                 onToggle={() => setExpandedProcess(expandedProcess === key ? null : key)}
+                showLayers={showLayers}
+                teamsData={supplyChainData.teams}
               />
             ))}
           </div>
@@ -738,9 +585,17 @@ export default function SupplyChainUI() {
                 Close
               </button>
             </div>
-            
-            <NodeCard node={selectedNode} />
-            
+
+            <NodeCard
+              node={{
+                ...selectedNode,
+                isSelected: true,
+                onSelect: () => setSelectedNode(null)
+              }}
+              showLayers={showLayers}
+              teamsData={supplyChainData.teams}
+            />
+
             {/* Connected flows */}
             <div className="mt-4">
               <div className="text-xs text-slate-500 uppercase tracking-wider mb-2">Connected Flows</div>

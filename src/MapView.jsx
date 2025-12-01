@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 // City coordinates in UK (latitude, longitude)
 const cityLocations = {
   'Glasgow': { lat: 55.8642, lng: -4.2518, region: 'Scotland' },
+  'Bradford': { lat: 53.79391, lng: -1.75206, region: 'Scotland' },
   'Edinburgh': { lat: 55.9533, lng: -3.1883, region: 'Scotland' },
   'Manchester': { lat: 53.4808, lng: -2.2426, region: 'North' },
   'Leeds': { lat: 53.8008, lng: -1.5491, region: 'North' },
