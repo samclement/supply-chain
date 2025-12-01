@@ -4,6 +4,9 @@ import DataManager from './DataManager.jsx';
 import MapView from './MapView.jsx';
 import NodeCard from './NodeCard.jsx';
 import BusinessProcessFlow from './BusinessProcessFlow.jsx';
+import MapLegend from './MapLegend.jsx';
+import SystemCard from './SystemCard.jsx';
+import TeamCard from './TeamCard.jsx';
 import { tempColors, nodeStyles, operatorColors } from './styles.js';
 import dataManager from './dataManager.js';
 
@@ -172,37 +175,7 @@ export default function SupplyChainUI() {
         </div>
 
         {/* Legend */}
-        <div className="bg-slate-900/60 rounded-lg border border-slate-700/50 p-4">
-          <div className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-            <Map className="w-4 h-4" />
-            Node Types
-          </div>
-          <div className="grid grid-cols-5 gap-3">
-            {Object.entries(nodeStyles).map(([type, style]) => {
-              const typeNodes = visibleNodes.filter(n => n.type === type);
-              if (typeNodes.length === 0) return null;
-
-              const nodeTypeColors = {
-                'supplier': '#10b981',
-                'ndc': '#a855f7',
-                'primary': '#f43f5e',
-                'rdc': '#f97316',
-                'store': '#3b82f6',
-              };
-
-              return (
-                <div key={type} className="text-xs">
-                  <div
-                    className="w-full h-6 rounded mb-1 opacity-80"
-                    style={{ backgroundColor: nodeTypeColors[type] }}
-                  ></div>
-                  <div className="font-medium text-slate-300 capitalize">{type}</div>
-                  <div className="text-slate-500">{typeNodes.length}</div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <MapLegend visibleNodes={visibleNodes} />
 
         {/* Detailed View */}
         <div className="bg-slate-900/60 rounded-lg border border-slate-700/50 p-4">
@@ -246,42 +219,20 @@ export default function SupplyChainUI() {
   // Systems view
   const SystemsView = () => {
     const allSystems = [...new Set(supplyChainData.nodes.flatMap(n => n.systems))];
-    
+
     return (
       <div className="grid grid-cols-3 gap-4">
         {allSystems.map(system => {
           const nodesWithSystem = visibleNodes.filter(n => n.systems.includes(system));
           const team = supplyChainData.teams[system];
-          
+
           return (
-            <div key={system} className="bg-slate-900/60 rounded-lg border border-slate-700/50 p-4">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <div className="text-sm font-semibold text-white flex items-center gap-2">
-                    <Cpu className="w-4 h-4 text-cyan-400" />
-                    {system}
-                  </div>
-                  {team && (
-                    <div className="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                      <Users className="w-3 h-3" />
-                      {team.name}
-                    </div>
-                  )}
-                </div>
-                <span className="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded">
-                  {nodesWithSystem.length} nodes
-                </span>
-              </div>
-              
-              <div className="space-y-1">
-                {nodesWithSystem.map(node => (
-                  <div key={node.id} className="text-xs text-slate-400 flex items-center gap-2">
-                    {React.createElement(nodeStyles[node.type].icon, { className: 'w-3 h-3' })}
-                    {node.name}
-                  </div>
-                ))}
-              </div>
-            </div>
+            <SystemCard
+              key={system}
+              system={system}
+              team={team}
+              nodesWithSystem={nodesWithSystem}
+            />
           );
         })}
       </div>
@@ -294,35 +245,15 @@ export default function SupplyChainUI() {
       <div className="grid grid-cols-2 gap-4">
         {Object.entries(supplyChainData.teams).map(([system, team]) => {
           const nodesWithSystem = visibleNodes.filter(n => n.systems.includes(system));
-          
+
           return (
-            <div key={system} className="bg-slate-900/60 rounded-lg border border-slate-700/50 p-4">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <div className="text-sm font-semibold text-white flex items-center gap-2">
-                    <Users className="w-4 h-4 text-indigo-400" />
-                    {team.name}
-                  </div>
-                  <div className="text-xs text-slate-500 mt-1">{team.contact}</div>
-                </div>
-              </div>
-              
-              <div className="mt-3 pt-3 border-t border-slate-700/50">
-                <div className="text-xs text-slate-500 mb-2">Owns: {system}</div>
-                <div className="text-xs text-slate-500 mb-1">Used by:</div>
-                <div className="space-y-1">
-                  {nodesWithSystem.slice(0, 5).map(node => (
-                    <div key={node.id} className="text-xs text-slate-400 flex items-center gap-2">
-                      {React.createElement(nodeStyles[node.type].icon, { className: 'w-3 h-3' })}
-                      {node.name}
-                    </div>
-                  ))}
-                  {nodesWithSystem.length > 5 && (
-                    <div className="text-xs text-slate-600">+{nodesWithSystem.length - 5} more</div>
-                  )}
-                </div>
-              </div>
-            </div>
+            <TeamCard
+              key={system}
+              teamName={team.name}
+              team={team}
+              system={system}
+              nodesWithSystem={nodesWithSystem}
+            />
           );
         })}
       </div>
