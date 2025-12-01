@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { ChevronDown, ChevronRight, Filter, Layers, Map, GitBranch, Users, Cpu, Eye, EyeOff, ZoomIn, ZoomOut, ArrowRight, ArrowDown, Edit3 } from 'lucide-react';
+import { ChevronDown, ChevronRight, ArrowRight, ArrowDown, GitBranch } from 'lucide-react';
 import DataManager from './DataManager.jsx';
 import MapView from './MapView.jsx';
 import NodeCard from './NodeCard.jsx';
@@ -7,7 +7,10 @@ import BusinessProcessFlow from './BusinessProcessFlow.jsx';
 import MapLegend from './MapLegend.jsx';
 import SystemCard from './SystemCard.jsx';
 import TeamCard from './TeamCard.jsx';
-import { tempColors, nodeStyles, operatorColors } from './styles.js';
+import Header from './Header.jsx';
+import FilterPanel from './FilterPanel.jsx';
+import SummaryStats from './SummaryStats.jsx';
+import { tempColors, nodeStyles } from './styles.js';
 import dataManager from './dataManager.js';
 
 export default function SupplyChainUI() {
@@ -273,228 +276,34 @@ export default function SupplyChainUI() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white" style={{ fontFamily: "'JetBrains Mono', 'Fira Code', monospace" }}>
-      {/* Header */}
-      <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-[1800px] mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
-                <Layers className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h1 className="text-lg font-bold tracking-tight">Supply Chain Collaboration</h1>
-                <p className="text-xs text-slate-500">Foods Network Visibility</p>
-              </div>
-            </div>
-            
-            {/* View switcher */}
-            <div className="flex items-center gap-1 bg-slate-800/50 p-1 rounded-lg">
-              {[
-                { id: 'logical', icon: GitBranch, label: 'Logical' },
-                { id: 'physical', icon: Map, label: 'Physical' },
-                { id: 'systems', icon: Cpu, label: 'Systems' },
-                { id: 'teams', icon: Users, label: 'Teams' },
-              ].map(view => (
-                <button
-                  key={view.id}
-                  onClick={() => setActiveView(view.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm transition-all ${
-                    activeView === view.id
-                      ? 'bg-slate-700 text-white'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <view.icon className="w-4 h-4" />
-                  {view.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Zoom controls and data manager */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setZoomLevel(Math.max(0.5, zoomLevel - 0.1))}
-                className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition-colors"
-              >
-                <ZoomOut className="w-4 h-4" />
-              </button>
-              <span className="text-xs text-slate-500 w-12 text-center">{Math.round(zoomLevel * 100)}%</span>
-              <button
-                onClick={() => setZoomLevel(Math.min(1.5, zoomLevel + 0.1))}
-                className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition-colors"
-              >
-                <ZoomIn className="w-4 h-4" />
-              </button>
-              <div className="w-px h-6 bg-slate-700 mx-1" />
-              <button
-                onClick={() => setDataManagerOpen(true)}
-                className="p-2 rounded-lg bg-purple-600/20 text-purple-400 hover:bg-purple-600/30 transition-colors border border-purple-500/30 hover:border-purple-500/50"
-                title="Open data manager"
-              >
-                <Edit3 className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header
+        activeView={activeView}
+        onViewChange={setActiveView}
+        zoomLevel={zoomLevel}
+        onZoomOut={() => setZoomLevel(Math.max(0.5, zoomLevel - 0.1))}
+        onZoomIn={() => setZoomLevel(Math.min(1.5, zoomLevel + 0.1))}
+        onOpenDataManager={() => setDataManagerOpen(true)}
+      />
 
       <div className="flex">
-        {/* Filter sidebar */}
-        <aside className={`${filterPanelOpen ? 'w-72' : 'w-12'} border-r border-slate-800 bg-slate-900/30 transition-all flex-shrink-0`}>
-          <button
-            onClick={() => setFilterPanelOpen(!filterPanelOpen)}
-            className="w-full p-3 flex items-center justify-between hover:bg-slate-800/50 transition-colors"
-          >
-            <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-slate-400" />
-              {filterPanelOpen && <span className="text-sm font-medium">Filters</span>}
-            </div>
-            {filterPanelOpen && (
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500">
-                  {Object.values(filters).flat().length} active
-                </span>
-                {Object.values(filters).flat().length > 0 && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      clearFilters();
-                    }}
-                    className="text-xs text-red-400 hover:text-red-300 transition-colors"
-                    title="Clear all filters"
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
-            )}
-          </button>
-
-          {filterPanelOpen && (
-            <div className="p-4 space-y-6">
-
-              {/* Temperature filter */}
-              <div>
-                <div className="text-xs uppercase tracking-wider text-slate-500 mb-2">Temperature</div>
-                <div className="flex flex-wrap gap-2">
-                  {Object.entries(tempColors).map(([temp, style]) => {
-                    const TempIcon = style.icon;
-                    return (
-                      <button
-                        key={temp}
-                        onClick={() => toggleFilter('temp', temp)}
-                        className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-all ${
-                          filters.temp.includes(temp)
-                            ? `${style.bg} ${style.text} border ${style.border}`
-                            : 'bg-slate-800/50 text-slate-400 border border-slate-700/50 hover:bg-slate-700/50'
-                        }`}
-                      >
-                        <TempIcon className="w-3 h-3" />
-                        {temp}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Operator filter */}
-              <div>
-                <div className="text-xs uppercase tracking-wider text-slate-500 mb-2">Operator</div>
-                <div className="flex flex-wrap gap-2">
-                  {['Company A', 'Company B', 'None'].map(op => (
-                    <button
-                      key={op}
-                      onClick={() => toggleFilter('operator', op)}
-                      className={`px-2 py-1 rounded text-xs transition-all ${
-                        filters.operator.includes(op)
-                          ? op === 'Company A'
-                            ? 'bg-green-500/20 text-green-400 border border-green-500/50'
-                            : op === 'Company B'
-                            ? 'bg-purple-500/20 text-purple-400 border border-purple-500/50'
-                            : 'bg-slate-600/50 text-slate-300 border border-slate-500/50'
-                          : 'bg-slate-800/50 text-slate-400 border border-slate-700/50 hover:bg-slate-700/50'
-                      }`}
-                    >
-                      {op}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Node type filter */}
-              <div>
-                <div className="text-xs uppercase tracking-wider text-slate-500 mb-2">Node Type</div>
-                <div className="flex flex-wrap gap-2">
-                  {Object.entries(nodeStyles).map(([type, style]) => (
-                    <button
-                      key={type}
-                      onClick={() => toggleFilter('nodeType', type)}
-                      className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-all ${
-                        filters.nodeType.includes(type)
-                          ? `${style.bg} ${style.border.replace('border-', 'text-').replace('/60', '')} border ${style.border}`
-                          : 'bg-slate-800/50 text-slate-400 border border-slate-700/50 hover:bg-slate-700/50'
-                      }`}
-                    >
-                      {React.createElement(style.icon, { className: 'w-3 h-3' })}
-                      {style.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Layer toggles */}
-              <div>
-                <div className="text-xs uppercase tracking-wider text-slate-500 mb-2">Layers</div>
-                <div className="space-y-2">
-                  {[
-                    { key: 'systems', icon: Cpu, label: 'Systems' },
-                    { key: 'teams', icon: Users, label: 'Teams' },
-                    { key: 'businessProcess', icon: GitBranch, label: 'Business Process' },
-                  ].map(layer => (
-                    <button
-                      key={layer.key}
-                      onClick={() => setShowLayers(prev => ({ ...prev, [layer.key]: !prev[layer.key] }))}
-                      className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-colors"
-                    >
-                      <div className="flex items-center gap-2">
-                        <layer.icon className="w-4 h-4 text-slate-400" />
-                        <span className="text-sm text-slate-300">{layer.label}</span>
-                      </div>
-                      {showLayers[layer.key] ? (
-                        <Eye className="w-4 h-4 text-cyan-400" />
-                      ) : (
-                        <EyeOff className="w-4 h-4 text-slate-600" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-        </aside>
+        <FilterPanel
+          isOpen={filterPanelOpen}
+          onToggle={() => setFilterPanelOpen(!filterPanelOpen)}
+          filters={filters}
+          onToggleFilter={toggleFilter}
+          onClearFilters={clearFilters}
+          showLayers={showLayers}
+          onToggleLayer={(layer) => setShowLayers(prev => ({ ...prev, [layer]: !prev[layer] }))}
+        />
 
         {/* Main content */}
         <main className="flex-1 p-6 overflow-auto">
           <div className="max-w-[1600px]">
             {/* Summary stats */}
-            <div className="grid grid-cols-5 gap-4 mb-6">
-              {Object.entries(nodeStyles).map(([type, style]) => {
-                const count = visibleNodes.filter(n => n.type === type).length;
-                const total = supplyChainData.nodes.filter(n => n.type === type).length;
-                return (
-                  <div key={type} className={`${style.bg} border ${style.border} rounded-lg p-4`}>
-                    <div className="flex items-center gap-2 mb-1">
-                      {React.createElement(style.icon, { className: `w-4 h-4 ${style.border.replace('border-', 'text-').replace('/60', '')}` })}
-                      <span className="text-xs text-slate-400 uppercase tracking-wider">{style.label}s</span>
-                    </div>
-                    <div className="text-2xl font-bold text-white">
-                      {count}
-                      {count !== total && <span className="text-sm text-slate-500 ml-1">/ {total}</span>}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <SummaryStats
+              visibleNodes={visibleNodes}
+              totalNodes={supplyChainData.nodes}
+            />
 
             {/* Active view content */}
             {activeView === 'logical' && <LogicalView />}
