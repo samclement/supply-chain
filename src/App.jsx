@@ -1,130 +1,7 @@
-import React, { useState, useMemo } from 'react';
-import { ChevronDown, ChevronRight, Filter, Layers, Map, GitBranch, Users, Cpu, Eye, EyeOff, ZoomIn, ZoomOut, Box, Truck, Store, Building2, Snowflake, Thermometer, Sun, ArrowRight, ArrowDown, Database, RefreshCw } from 'lucide-react';
-
-// Data Models
-const supplyChainData = {
-  nodes: [
-    // Suppliers
-    { id: 'sup1', type: 'supplier', name: 'Fresh Foods Ltd', temp: ['chilled', 'ambient'], operator: null, location: 'Manchester', systems: ['SAP', 'EDI Gateway'] },
-    { id: 'sup2', type: 'supplier', name: 'Frozen Goods Co', temp: ['frozen'], operator: null, location: 'Leeds', systems: ['Oracle', 'EDI Gateway'] },
-    { id: 'sup3', type: 'supplier', name: 'Ambient Supplies', temp: ['ambient'], operator: null, location: 'Birmingham', systems: ['Custom ERP'] },
-    
-    // NDCs
-    { id: 'ndc1', type: 'ndc', name: 'National DC North', temp: ['ambient', 'frozen'], operator: 'Company A', location: 'Doncaster', systems: ['WMS-A', 'TMS', 'Stock System'] },
-    { id: 'ndc2', type: 'ndc', name: 'National DC South', temp: ['ambient', 'frozen'], operator: 'Company B', location: 'Milton Keynes', systems: ['WMS-B', 'TMS', 'Stock System'] },
-    
-    // Primaries (Cross-docking chilled)
-    { id: 'pri1', type: 'primary', name: 'Primary Hub North', temp: ['chilled'], operator: 'Company A', location: 'Sheffield', systems: ['Cross-Dock System', 'TMS'] },
-    { id: 'pri2', type: 'primary', name: 'Primary Hub South', temp: ['chilled'], operator: 'Company B', location: 'Reading', systems: ['Cross-Dock System', 'TMS'] },
-    
-    // RDCs
-    { id: 'rdc1', type: 'rdc', name: 'Regional DC Scotland', temp: ['ambient', 'chilled', 'frozen'], operator: 'Company A', location: 'Glasgow', systems: ['WMS-A', 'Allocation Engine'] },
-    { id: 'rdc2', type: 'rdc', name: 'Regional DC Midlands', temp: ['ambient', 'chilled', 'frozen'], operator: 'Company A', location: 'Nottingham', systems: ['WMS-A', 'Allocation Engine'] },
-    { id: 'rdc3', type: 'rdc', name: 'Regional DC South West', temp: ['ambient', 'chilled', 'frozen'], operator: 'Company B', location: 'Bristol', systems: ['WMS-B', 'Allocation Engine'] },
-    
-    // Stores
-    { id: 'store1', type: 'store', name: 'Store Glasgow Central', temp: ['ambient', 'chilled', 'frozen'], operator: null, location: 'Glasgow', systems: ['POS', 'Stock Counter', 'Ordering System'] },
-    { id: 'store2', type: 'store', name: 'Store Edinburgh', temp: ['ambient', 'chilled', 'frozen'], operator: null, location: 'Edinburgh', systems: ['POS', 'Stock Counter', 'Ordering System'] },
-    { id: 'store3', type: 'store', name: 'Store Birmingham', temp: ['ambient', 'chilled', 'frozen'], operator: null, location: 'Birmingham', systems: ['POS', 'Stock Counter', 'Ordering System'] },
-    { id: 'store4', type: 'store', name: 'Store Bristol', temp: ['ambient', 'chilled', 'frozen'], operator: null, location: 'Bristol', systems: ['POS', 'Stock Counter', 'Ordering System'] },
-  ],
-  
-  flows: [
-    // Supplier to NDC/Primary
-    { id: 'f1', from: 'sup1', to: 'pri1', type: 'inbound', hasASN: true, temp: 'chilled' },
-    { id: 'f2', from: 'sup1', to: 'ndc1', type: 'inbound', hasASN: true, temp: 'ambient' },
-    { id: 'f3', from: 'sup2', to: 'ndc1', type: 'inbound', hasASN: false, temp: 'frozen' },
-    { id: 'f4', from: 'sup3', to: 'ndc2', type: 'inbound', hasASN: true, temp: 'ambient' },
-    { id: 'f5', from: 'sup1', to: 'pri2', type: 'inbound', hasASN: true, temp: 'chilled' },
-    
-    // NDC to RDC
-    { id: 'f6', from: 'ndc1', to: 'rdc1', type: 'transfer', temp: 'ambient' },
-    { id: 'f7', from: 'ndc1', to: 'rdc1', type: 'transfer', temp: 'frozen' },
-    { id: 'f8', from: 'ndc1', to: 'rdc2', type: 'transfer', temp: 'ambient' },
-    { id: 'f9', from: 'ndc2', to: 'rdc3', type: 'transfer', temp: 'ambient' },
-    
-    // Primary to RDC (cross-dock chilled)
-    { id: 'f10', from: 'pri1', to: 'rdc1', type: 'crossdock', temp: 'chilled' },
-    { id: 'f11', from: 'pri1', to: 'rdc2', type: 'crossdock', temp: 'chilled' },
-    { id: 'f12', from: 'pri2', to: 'rdc3', type: 'crossdock', temp: 'chilled' },
-    
-    // RDC to Store
-    { id: 'f13', from: 'rdc1', to: 'store1', type: 'delivery', temp: 'multi' },
-    { id: 'f14', from: 'rdc1', to: 'store2', type: 'delivery', temp: 'multi' },
-    { id: 'f15', from: 'rdc2', to: 'store3', type: 'delivery', temp: 'multi' },
-    { id: 'f16', from: 'rdc3', to: 'store4', type: 'delivery', temp: 'multi' },
-  ],
-  
-  businessProcesses: {
-    inbound: {
-      name: 'External Inbound',
-      logical: 'supplier',
-      steps: [
-        { id: 'bp1', name: 'ASN Transmission', systems: ['EDI Gateway', 'SAP', 'Oracle'], description: 'Supplier sends Advanced Shipping Notice' },
-        { id: 'bp2', name: 'ASN Receipt', systems: ['WMS-A', 'WMS-B'], description: 'DC receives and validates ASN' },
-        { id: 'bp3', name: 'Vehicle Arrival', systems: ['Yard Management', 'TMS'], description: 'Vehicle checks in at DC' },
-        { id: 'bp4', name: 'Goods Receipt', systems: ['WMS-A', 'WMS-B', 'Stock System'], description: 'Physical receipt and system booking' },
-        { id: 'bp5', name: 'Quality Check', systems: ['WMS-A', 'WMS-B'], description: 'Temperature and quality verification' },
-        { id: 'bp6', name: 'Putaway', systems: ['WMS-A', 'WMS-B'], description: 'Stock moved to storage location' },
-      ]
-    },
-    warehouse: {
-      name: 'Warehouse Operations',
-      logical: 'dc',
-      steps: [
-        { id: 'bp7', name: 'Inventory Management', systems: ['WMS-A', 'WMS-B', 'Stock System'], description: 'Stock counting and adjustments' },
-        { id: 'bp8', name: 'Replenishment', systems: ['WMS-A', 'WMS-B'], description: 'Pick face replenishment' },
-        { id: 'bp9', name: 'Order Allocation', systems: ['Allocation Engine'], description: 'Allocate stock to store orders' },
-        { id: 'bp10', name: 'Pick', systems: ['WMS-A', 'WMS-B'], description: 'Pick items for orders' },
-        { id: 'bp11', name: 'Dispatch', systems: ['WMS-A', 'WMS-B', 'TMS'], description: 'Load and dispatch to stores' },
-      ]
-    },
-    crossdock: {
-      name: 'Cross-Dock (Chilled)',
-      logical: 'primary',
-      steps: [
-        { id: 'bp12', name: 'Supplier Delivery', systems: ['Cross-Dock System'], description: 'Chilled goods arrive at Primary' },
-        { id: 'bp13', name: 'Sortation', systems: ['Cross-Dock System'], description: 'Sort by destination RDC' },
-        { id: 'bp14', name: 'Consolidation', systems: ['Cross-Dock System', 'TMS'], description: 'Consolidate for onward delivery' },
-        { id: 'bp15', name: 'Dispatch to RDC', systems: ['TMS'], description: 'Ship to Regional DC' },
-      ]
-    },
-    store: {
-      name: 'Store Operations',
-      logical: 'store',
-      steps: [
-        { id: 'bp16', name: 'Delivery Receipt', systems: ['Stock Counter'], description: 'Receive delivery from RDC' },
-        { id: 'bp17', name: 'Stock to Shelf', systems: ['Stock Counter'], description: 'Replenish store shelves' },
-        { id: 'bp18', name: 'Sales', systems: ['POS'], description: 'Customer transactions' },
-        { id: 'bp19', name: 'Stock Count', systems: ['Stock Counter'], description: 'Regular stock counts' },
-        { id: 'bp20', name: 'Sales Data Export', systems: ['POS', 'Forecasting System'], description: 'Send sales data for forecasting' },
-      ]
-    },
-    forecasting: {
-      name: 'Planning & Forecasting',
-      logical: 'planning',
-      steps: [
-        { id: 'bp21', name: 'Demand Forecast', systems: ['Forecasting System'], description: 'Generate demand forecasts' },
-        { id: 'bp22', name: 'Order Generation', systems: ['Ordering System', 'Allocation Engine'], description: 'Create replenishment orders' },
-        { id: 'bp23', name: 'Supplier Orders', systems: ['Ordering System', 'EDI Gateway'], description: 'Place orders with suppliers' },
-      ]
-    }
-  },
-  
-  teams: {
-    'WMS-A': { name: 'Warehouse Systems Team A', contact: 'wms-a@company.com' },
-    'WMS-B': { name: 'Warehouse Systems Team B', contact: 'wms-b@company.com' },
-    'TMS': { name: 'Transport Systems', contact: 'transport@company.com' },
-    'Stock System': { name: 'Stock Management Team', contact: 'stock@company.com' },
-    'EDI Gateway': { name: 'Integration Team', contact: 'edi@company.com' },
-    'Forecasting System': { name: 'Planning Systems', contact: 'planning@company.com' },
-    'Allocation Engine': { name: 'Allocation Team', contact: 'allocation@company.com' },
-    'POS': { name: 'Store Systems', contact: 'store-tech@company.com' },
-    'Cross-Dock System': { name: 'Primary Hub Team', contact: 'crossdock@company.com' },
-    'Ordering System': { name: 'Replenishment Team', contact: 'replen@company.com' },
-    'Stock Counter': { name: 'Store Systems', contact: 'store-tech@company.com' },
-  }
-};
+import React, { useState, useMemo, useEffect } from 'react';
+import { ChevronDown, ChevronRight, Filter, Layers, Map, GitBranch, Users, Cpu, Eye, EyeOff, ZoomIn, ZoomOut, Box, Truck, Store, Building2, Snowflake, Thermometer, Sun, ArrowRight, ArrowDown, Database, RefreshCw, Edit3 } from 'lucide-react';
+import DataManager from './DataManager.jsx';
+import dataManager from './dataManager.js';
 
 // Temperature styling
 const tempColors = {
@@ -149,6 +26,7 @@ const operatorColors = {
 };
 
 export default function SupplyChainUI() {
+  const [supplyChainData, setSupplyChainData] = useState(null);
   const [activeView, setActiveView] = useState('logical');
   const [filters, setFilters] = useState({
     temp: [],
@@ -167,26 +45,40 @@ export default function SupplyChainUI() {
 
   // Filter panel toggle
   const [filterPanelOpen, setFilterPanelOpen] = useState(true);
+  const [dataManagerOpen, setDataManagerOpen] = useState(false);
+
+  // Load data from local storage on mount
+  useEffect(() => {
+    const data = dataManager.loadData();
+    setSupplyChainData(data);
+  }, []);
+
+  const handleDataChange = (newData) => {
+    setSupplyChainData(newData);
+    dataManager.saveData(newData);
+  };
 
   // Compute visible nodes based on filters
   const visibleNodes = useMemo(() => {
+    if (!supplyChainData) return [];
     return supplyChainData.nodes.filter(node => {
       if (filters.temp.length > 0 && !node.temp.some(t => filters.temp.includes(t))) return false;
       if (filters.operator.length > 0 && !filters.operator.includes(node.operator || 'None')) return false;
       if (filters.nodeType.length > 0 && !filters.nodeType.includes(node.type)) return false;
       return true;
     });
-  }, [filters]);
+  }, [filters, supplyChainData]);
 
   const visibleNodeIds = new Set(visibleNodes.map(n => n.id));
 
   const visibleFlows = useMemo(() => {
+    if (!supplyChainData) return [];
     return supplyChainData.flows.filter(flow => {
       if (!visibleNodeIds.has(flow.from) || !visibleNodeIds.has(flow.to)) return false;
       if (filters.temp.length > 0 && flow.temp !== 'multi' && !filters.temp.includes(flow.temp)) return false;
       return true;
     });
-  }, [filters, visibleNodeIds]);
+  }, [filters, visibleNodeIds, supplyChainData]);
 
   const toggleFilter = (category, value) => {
     setFilters(prev => ({
@@ -543,6 +435,17 @@ export default function SupplyChainUI() {
     );
   };
 
+  if (!supplyChainData) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center" style={{ fontFamily: "'JetBrains Mono', 'Fira Code', monospace" }}>
+        <div className="text-center">
+          <div className="w-12 h-12 border-2 border-slate-700 border-t-cyan-500 rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-slate-400">Loading data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 text-white" style={{ fontFamily: "'JetBrains Mono', 'Fira Code', monospace" }}>
       {/* Header */}
@@ -582,7 +485,7 @@ export default function SupplyChainUI() {
               ))}
             </div>
 
-            {/* Zoom controls */}
+            {/* Zoom controls and data manager */}
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setZoomLevel(Math.max(0.5, zoomLevel - 0.1))}
@@ -596,6 +499,14 @@ export default function SupplyChainUI() {
                 className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition-colors"
               >
                 <ZoomIn className="w-4 h-4" />
+              </button>
+              <div className="w-px h-6 bg-slate-700 mx-1" />
+              <button
+                onClick={() => setDataManagerOpen(true)}
+                className="p-2 rounded-lg bg-purple-600/20 text-purple-400 hover:bg-purple-600/30 transition-colors border border-purple-500/30 hover:border-purple-500/50"
+                title="Open data manager"
+              >
+                <Edit3 className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -815,6 +726,16 @@ export default function SupplyChainUI() {
               </div>
             </div>
           </aside>
+        )}
+
+        {/* Data Manager */}
+        {supplyChainData && (
+          <DataManager
+            data={supplyChainData}
+            onDataChange={handleDataChange}
+            isOpen={dataManagerOpen}
+            onClose={() => setDataManagerOpen(false)}
+          />
         )}
       </div>
     </div>
