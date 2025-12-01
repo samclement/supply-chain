@@ -357,8 +357,8 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-[100]" onClick={onClose}>
-      <div className="fixed right-0 top-0 bottom-0 w-full md:w-[600px] bg-slate-900 border-l border-slate-800 flex flex-col shadow-2xl" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black/50 z-[1000]" onClick={onClose}>
+      <div className="fixed right-0 top-0 bottom-0 w-full md:w-[600px] bg-slate-900 border-l border-slate-800 flex flex-col shadow-2xl z-[1001]" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-800 p-4 flex-shrink-0">
           <h2 className="text-lg font-bold text-white">Data Manager</h2>
