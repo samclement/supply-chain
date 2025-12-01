@@ -572,23 +572,28 @@ export default function SupplyChainUI() {
               {filterPanelOpen && <span className="text-sm font-medium">Filters</span>}
             </div>
             {filterPanelOpen && (
-              <span className="text-xs text-slate-500">
-                {Object.values(filters).flat().length} active
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-500">
+                  {Object.values(filters).flat().length} active
+                </span>
+                {Object.values(filters).flat().length > 0 && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      clearFilters();
+                    }}
+                    className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                    title="Clear all filters"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
             )}
           </button>
 
           {filterPanelOpen && (
             <div className="p-4 space-y-6">
-              {/* Clear all */}
-              {Object.values(filters).flat().length > 0 && (
-                <button
-                  onClick={clearFilters}
-                  className="w-full text-xs text-red-400 hover:text-red-300 text-left"
-                >
-                  Clear all filters
-                </button>
-              )}
 
               {/* Temperature filter */}
               <div>
