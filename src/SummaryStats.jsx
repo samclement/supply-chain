@@ -11,9 +11,9 @@ export default function SummaryStats({ visibleNodes, totalNodes }) {
           <div key={type} className={`${style.bg} border ${style.border} rounded-lg p-4`}>
             <div className="flex items-center gap-2 mb-1">
               {React.createElement(style.icon, { className: `w-4 h-4 ${style.border.replace('border-', 'text-').replace('/60', '')}` })}
-              <span className="text-xs text-slate-400 uppercase tracking-wider">{style.label}s</span>
+              <span className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">{style.label}s</span>
             </div>
-            <div className="text-2xl font-bold text-white">
+            <div className="text-2xl font-bold text-slate-950 dark:text-white">
               {count}
               {count !== total && <span className="text-sm text-slate-500 ml-1">/ {total}</span>}
             </div>

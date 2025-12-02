@@ -50,8 +50,8 @@ export default function LogicalView({
             </div>
             {groupIdx < Object.keys(groupedNodes).length - 1 && (
               <div className="flex-shrink-0 flex flex-col items-center justify-center pt-8">
-                <ArrowRight className="w-8 h-8 text-slate-600" />
-                <div className="text-xs text-slate-600 mt-1">Flow</div>
+                <ArrowRight className="w-8 h-8 text-slate-400 dark:text-slate-600" />
+                <div className="text-xs text-slate-400 dark:text-slate-600 mt-1">Flow</div>
               </div>
             )}
           </React.Fragment>
@@ -61,7 +61,7 @@ export default function LogicalView({
       {/* Business processes */}
       {showLayers.businessProcess && (
         <div className="space-y-3">
-          <div className="text-sm font-semibold text-slate-300 flex items-center gap-2">
+          <div className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
             <GitBranch className="w-4 h-4" />
             Business Processes
           </div>

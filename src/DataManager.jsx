@@ -107,23 +107,23 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
     const typeOptions = ['supplier', 'ndc', 'primary', 'rdc', 'store'];
 
     return (
-      <div className="space-y-3 bg-slate-800/50 p-4 rounded-lg border border-slate-700/50">
+      <div className="space-y-3 bg-slate-100 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-300 dark:border-slate-700/50 text-slate-950 dark:text-white">
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-slate-400 uppercase">ID</label>
+            <label className="text-xs text-slate-600 dark:text-slate-400 uppercase">ID</label>
             <input
               type="text"
               value={form.id}
               disabled
-              className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-400"
+              className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-xs text-slate-600 dark:text-slate-400"
             />
           </div>
           <div>
-            <label className="text-xs text-slate-400 uppercase">Type</label>
+            <label className="text-xs text-slate-600 dark:text-slate-400 uppercase">Type</label>
             <select
               value={form.type}
               onChange={(e) => setForm({ ...form, type: e.target.value })}
-              className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white"
+              className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-xs text-slate-950 dark:text-white"
             >
               {typeOptions.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
@@ -131,31 +131,31 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
         </div>
 
         <div>
-          <label className="text-xs text-slate-400 uppercase">Name</label>
+          <label className="text-xs text-slate-600 dark:text-slate-400 uppercase">Name</label>
           <input
             type="text"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white"
+            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-xs text-slate-950 dark:text-white"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-slate-400 uppercase">Location</label>
+            <label className="text-xs text-slate-600 dark:text-slate-400 uppercase">Location</label>
             <input
               type="text"
               value={form.location}
               onChange={(e) => setForm({ ...form, location: e.target.value })}
-              className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white"
+              className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-xs text-slate-950 dark:text-white"
             />
           </div>
           <div>
-            <label className="text-xs text-slate-400 uppercase">Operator</label>
+            <label className="text-xs text-slate-600 dark:text-slate-400 uppercase">Operator</label>
             <select
               value={form.operator || ''}
               onChange={(e) => setForm({ ...form, operator: e.target.value || null })}
-              className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white"
+              className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-xs text-slate-950 dark:text-white"
             >
               <option value="">None</option>
               <option value="Company A">Company A</option>
@@ -165,7 +165,7 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
         </div>
 
         <div>
-          <label className="text-xs text-slate-400 uppercase mb-2 block">Temperature Types</label>
+          <label className="text-xs text-slate-600 dark:text-slate-400 uppercase mb-2 block">Temperature Types</label>
           <div className="flex flex-wrap gap-2 mb-2">
             {form.temp.map(t => (
               <span key={t} className="bg-blue-900/40 text-blue-300 px-2 py-1 rounded text-xs flex items-center gap-1">
@@ -184,7 +184,7 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
             <select
               value={tempInput}
               onChange={(e) => setTempInput(e.target.value)}
-              className="flex-1 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white"
+              className="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-xs text-slate-950 dark:text-white"
             >
               <option value="">Add temp type...</option>
               {tempOptions.filter(t => !form.temp.includes(t)).map(t => (
@@ -228,7 +228,7 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
               value={sysInput}
               onChange={(e) => setSysInput(e.target.value)}
               placeholder="System name..."
-              className="flex-1 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white"
+              className="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-xs text-slate-950 dark:text-white"
             />
             <button
               type="button"
@@ -248,7 +248,7 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
         <div className="flex gap-2 justify-end pt-2">
           <button
             onClick={onCancel}
-            className="px-3 py-1 rounded text-xs bg-slate-700 hover:bg-slate-600 text-white"
+            className="px-3 py-1 rounded text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-950 dark:text-white"
           >
             Cancel
           </button>
@@ -267,14 +267,14 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
     const [form, setForm] = useState(flow);
 
     return (
-      <div className="space-y-3 bg-slate-800/50 p-4 rounded-lg border border-slate-700/50">
+      <div className="space-y-3 bg-slate-100 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-300 dark:border-slate-700/50 text-slate-950 dark:text-white">
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-slate-400 uppercase">From</label>
+            <label className="text-xs text-slate-600 dark:text-slate-400 uppercase">From</label>
             <select
               value={form.from}
               onChange={(e) => setForm({ ...form, from: e.target.value })}
-              className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white"
+              className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-xs text-slate-950 dark:text-white"
             >
               {data.nodes.map(n => (
                 <option key={n.id} value={n.id}>{n.name}</option>
@@ -282,11 +282,11 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
             </select>
           </div>
           <div>
-            <label className="text-xs text-slate-400 uppercase">To</label>
+            <label className="text-xs text-slate-600 dark:text-slate-400 uppercase">To</label>
             <select
               value={form.to}
               onChange={(e) => setForm({ ...form, to: e.target.value })}
-              className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white"
+              className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-xs text-slate-950 dark:text-white"
             >
               {data.nodes.map(n => (
                 <option key={n.id} value={n.id}>{n.name}</option>
@@ -297,11 +297,11 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
 
         <div className="grid grid-cols-3 gap-3">
           <div>
-            <label className="text-xs text-slate-400 uppercase">Type</label>
+            <label className="text-xs text-slate-600 dark:text-slate-400 uppercase">Type</label>
             <select
               value={form.type}
               onChange={(e) => setForm({ ...form, type: e.target.value })}
-              className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white"
+              className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-xs text-slate-950 dark:text-white"
             >
               <option value="inbound">inbound</option>
               <option value="transfer">transfer</option>
@@ -310,11 +310,11 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
             </select>
           </div>
           <div>
-            <label className="text-xs text-slate-400 uppercase">Temperature</label>
+            <label className="text-xs text-slate-600 dark:text-slate-400 uppercase">Temperature</label>
             <select
               value={form.temp}
               onChange={(e) => setForm({ ...form, temp: e.target.value })}
-              className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white"
+              className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-xs text-slate-950 dark:text-white"
             >
               <option value="ambient">ambient</option>
               <option value="chilled">chilled</option>
@@ -323,11 +323,11 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
             </select>
           </div>
           <div>
-            <label className="text-xs text-slate-400 uppercase">ASN</label>
+            <label className="text-xs text-slate-600 dark:text-slate-400 uppercase">ASN</label>
             <select
               value={form.hasASN !== undefined ? form.hasASN.toString() : ''}
               onChange={(e) => setForm({ ...form, hasASN: e.target.value === 'true' })}
-              className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white"
+              className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-xs text-slate-950 dark:text-white"
             >
               <option value="">N/A</option>
               <option value="true">Yes</option>
@@ -339,7 +339,7 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
         <div className="flex gap-2 justify-end pt-2">
           <button
             onClick={onCancel}
-            className="px-3 py-1 rounded text-xs bg-slate-700 hover:bg-slate-600 text-white"
+            className="px-3 py-1 rounded text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-950 dark:text-white"
           >
             Cancel
           </button>
@@ -358,13 +358,13 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 z-[1000]" onClick={onClose}>
-      <div className="fixed right-0 top-0 bottom-0 w-full md:w-[600px] bg-slate-900 border-l border-slate-800 flex flex-col shadow-2xl z-[1001]" onClick={(e) => e.stopPropagation()}>
+      <div className="fixed right-0 top-0 bottom-0 w-full md:w-[600px] bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 flex flex-col shadow-2xl z-[1001] text-slate-950 dark:text-white" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 p-4 flex-shrink-0">
-          <h2 className="text-lg font-bold text-white">Data Manager</h2>
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 p-4 flex-shrink-0">
+          <h2 className="text-lg font-bold text-slate-950 dark:text-white">Data Manager</h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors flex-shrink-0"
+            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white transition-colors flex-shrink-0"
             title="Close"
           >
             <X className="w-5 h-5" />
@@ -372,13 +372,13 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-slate-800 px-4 flex-shrink-0">
+        <div className="flex border-b border-slate-200 dark:border-slate-800 px-4 flex-shrink-0">
           <button
             onClick={() => setActiveTab('nodes')}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'nodes'
-                ? 'border-blue-500 text-blue-400'
-                : 'border-transparent text-slate-400 hover:text-white'
+                ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
             }`}
           >
             Nodes ({data.nodes.length})
@@ -387,8 +387,8 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
             onClick={() => setActiveTab('flows')}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'flows'
-                ? 'border-blue-500 text-blue-400'
-                : 'border-transparent text-slate-400 hover:text-white'
+                ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
             }`}
           >
             Flows ({data.flows.length})
@@ -397,8 +397,8 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
             onClick={() => setActiveTab('import-export')}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'import-export'
-                ? 'border-blue-500 text-blue-400'
-                : 'border-transparent text-slate-400 hover:text-white'
+                ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
             }`}
           >
             Import/Export
@@ -419,20 +419,20 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
               </button>
 
               {data.nodes.map(node => (
-                <div key={node.id} className="bg-slate-800/50 border border-slate-700/50 rounded-lg overflow-hidden">
+                <div key={node.id} className="bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700/50 rounded-lg overflow-hidden">
                   <button
                     onClick={() => setExpandedNode(expandedNode === node.id ? null : node.id)}
-                    className="w-full flex items-center justify-between p-3 hover:bg-slate-700/30 transition-colors"
+                    className="w-full flex items-center justify-between p-3 hover:bg-slate-200 dark:hover:bg-slate-700/30 transition-colors text-slate-950 dark:text-white"
                   >
                     <div className="flex items-center gap-2 text-left flex-1">
                       {expandedNode === node.id ? (
-                        <ChevronDown className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                        <ChevronDown className="w-4 h-4 text-slate-600 dark:text-slate-400 flex-shrink-0" />
                       ) : (
-                        <ChevronRight className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                        <ChevronRight className="w-4 h-4 text-slate-600 dark:text-slate-400 flex-shrink-0" />
                       )}
                       <div className="min-w-0">
-                        <div className="text-sm font-medium text-white truncate">{node.name}</div>
-                        <div className="text-xs text-slate-500">{node.type} • {node.location}</div>
+                        <div className="text-sm font-medium text-slate-950 dark:text-white truncate">{node.name}</div>
+                        <div className="text-xs text-slate-600 dark:text-slate-500">{node.type} • {node.location}</div>
                       </div>
                     </div>
                     <div className="flex gap-2 flex-shrink-0">
@@ -441,7 +441,7 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
                           e.stopPropagation();
                           setEditingId(editingId === node.id ? null : node.id);
                         }}
-                        className="p-1 hover:bg-slate-600 rounded text-slate-400 hover:text-white"
+                        className="p-1 hover:bg-slate-200 dark:hover:bg-slate-600 rounded text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
@@ -450,7 +450,7 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
                           e.stopPropagation();
                           handleDeleteNode(node.id);
                         }}
-                        className="p-1 hover:bg-red-900/30 rounded text-red-400 hover:text-red-300"
+                        className="p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -466,13 +466,13 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
                           onCancel={() => setEditingId(null)}
                         />
                       ) : (
-                        <div className="bg-slate-900/50 p-3 rounded text-xs text-slate-300 space-y-1">
-                          <div><span className="text-slate-500">ID:</span> {node.id}</div>
-                          <div><span className="text-slate-500">Type:</span> {node.type}</div>
-                          <div><span className="text-slate-500">Location:</span> {node.location}</div>
-                          <div><span className="text-slate-500">Operator:</span> {node.operator || 'None'}</div>
-                          <div><span className="text-slate-500">Temps:</span> {node.temp.join(', ')}</div>
-                          <div><span className="text-slate-500">Systems:</span> {node.systems.length > 0 ? node.systems.join(', ') : 'None'}</div>
+                        <div className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded text-xs text-slate-700 dark:text-slate-300 space-y-1">
+                          <div><span className="text-slate-600 dark:text-slate-500">ID:</span> {node.id}</div>
+                          <div><span className="text-slate-600 dark:text-slate-500">Type:</span> {node.type}</div>
+                          <div><span className="text-slate-600 dark:text-slate-500">Location:</span> {node.location}</div>
+                          <div><span className="text-slate-600 dark:text-slate-500">Operator:</span> {node.operator || 'None'}</div>
+                          <div><span className="text-slate-600 dark:text-slate-500">Temps:</span> {node.temp.join(', ')}</div>
+                          <div><span className="text-slate-600 dark:text-slate-500">Systems:</span> {node.systems.length > 0 ? node.systems.join(', ') : 'None'}</div>
                         </div>
                       )}
                     </div>
@@ -498,22 +498,22 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
                 const toNode = data.nodes.find(n => n.id === flow.to);
 
                 return (
-                  <div key={flow.id} className="bg-slate-800/50 border border-slate-700/50 rounded-lg overflow-hidden">
+                  <div key={flow.id} className="bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700/50 rounded-lg overflow-hidden">
                     <button
                       onClick={() => setExpandedNode(expandedNode === flow.id ? null : flow.id)}
-                      className="w-full flex items-center justify-between p-3 hover:bg-slate-700/30 transition-colors"
+                      className="w-full flex items-center justify-between p-3 hover:bg-slate-200 dark:hover:bg-slate-700/30 transition-colors text-slate-950 dark:text-white"
                     >
                       <div className="flex items-center gap-2 text-left flex-1 min-w-0">
                         {expandedNode === flow.id ? (
-                          <ChevronDown className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                          <ChevronDown className="w-4 h-4 text-slate-600 dark:text-slate-400 flex-shrink-0" />
                         ) : (
-                          <ChevronRight className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                          <ChevronRight className="w-4 h-4 text-slate-600 dark:text-slate-400 flex-shrink-0" />
                         )}
                         <div className="min-w-0">
-                          <div className="text-sm font-medium text-white truncate">
+                          <div className="text-sm font-medium text-slate-950 dark:text-white truncate">
                             {fromNode?.name} → {toNode?.name}
                           </div>
-                          <div className="text-xs text-slate-500">{flow.type} • {flow.temp}</div>
+                          <div className="text-xs text-slate-600 dark:text-slate-500">{flow.type} • {flow.temp}</div>
                         </div>
                       </div>
                       <div className="flex gap-2 flex-shrink-0">
@@ -547,14 +547,14 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
                             onCancel={() => setEditingId(null)}
                           />
                         ) : (
-                          <div className="bg-slate-900/50 p-3 rounded text-xs text-slate-300 space-y-1">
-                            <div><span className="text-slate-500">ID:</span> {flow.id}</div>
-                            <div><span className="text-slate-500">From:</span> {fromNode?.name}</div>
-                            <div><span className="text-slate-500">To:</span> {toNode?.name}</div>
-                            <div><span className="text-slate-500">Type:</span> {flow.type}</div>
-                            <div><span className="text-slate-500">Temperature:</span> {flow.temp}</div>
+                          <div className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded text-xs text-slate-700 dark:text-slate-300 space-y-1">
+                            <div><span className="text-slate-600 dark:text-slate-500">ID:</span> {flow.id}</div>
+                            <div><span className="text-slate-600 dark:text-slate-500">From:</span> {fromNode?.name}</div>
+                            <div><span className="text-slate-600 dark:text-slate-500">To:</span> {toNode?.name}</div>
+                            <div><span className="text-slate-600 dark:text-slate-500">Type:</span> {flow.type}</div>
+                            <div><span className="text-slate-600 dark:text-slate-500">Temperature:</span> {flow.temp}</div>
                             {flow.hasASN !== undefined && (
-                              <div><span className="text-slate-500">ASN:</span> {flow.hasASN ? 'Yes' : 'No'}</div>
+                              <div><span className="text-slate-600 dark:text-slate-500">ASN:</span> {flow.hasASN ? 'Yes' : 'No'}</div>
                             )}
                           </div>
                         )}
@@ -570,8 +570,8 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
           {activeTab === 'import-export' && (
             <div className="space-y-4">
               <div>
-                <h3 className="text-sm font-semibold text-white mb-3">Export Data</h3>
-                <p className="text-xs text-slate-400 mb-3">
+                <h3 className="text-sm font-semibold text-slate-950 dark:text-white mb-3">Export Data</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
                   Download your data as a JSON file that can be imported back later.
                 </p>
                 <button
@@ -583,11 +583,11 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
                 </button>
               </div>
 
-              <div className="border-t border-slate-700" />
+              <div className="border-t border-slate-300 dark:border-slate-700" />
 
               <div>
-                <h3 className="text-sm font-semibold text-white mb-3">Import Data</h3>
-                <p className="text-xs text-slate-400 mb-3">
+                <h3 className="text-sm font-semibold text-slate-950 dark:text-white mb-3">Import Data</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
                   Load data from a previously exported JSON file.
                 </p>
                 <label className="block">
@@ -603,17 +603,17 @@ export default function DataManager({ data, onDataChange, isOpen, onClose }) {
                   </span>
                 </label>
                 {importError && (
-                  <div className="mt-2 p-2 rounded bg-red-900/20 border border-red-500/30 text-xs text-red-300">
+                  <div className="mt-2 p-2 rounded bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-500/30 text-xs text-red-600 dark:text-red-300">
                     {importError}
                   </div>
                 )}
               </div>
 
-              <div className="border-t border-slate-700" />
+              <div className="border-t border-slate-300 dark:border-slate-700" />
 
               <div>
-                <h3 className="text-sm font-semibold text-white mb-3">Reset to Defaults</h3>
-                <p className="text-xs text-slate-400 mb-3">
+                <h3 className="text-sm font-semibold text-slate-950 dark:text-white mb-3">Reset to Defaults</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
                   Restore the original sample data. This action cannot be undone.
                 </p>
                 <button

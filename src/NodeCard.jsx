@@ -27,9 +27,9 @@ export default function NodeCard({
       <div className="flex items-start gap-2">
         <Icon className={`w-4 h-4 ${style.border.replace('border-', 'text-').replace('/60', '')}`} />
         <div className="flex-1 min-w-0">
-          <div className="text-xs text-slate-400 uppercase tracking-wide">{style.label}</div>
-          <div className="text-sm font-medium text-white truncate">{node.name}</div>
-          {!compact && <div className="text-xs text-slate-500">{node.location}</div>}
+          <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">{style.label}</div>
+          <div className="text-sm font-medium text-slate-900 dark:text-white truncate">{node.name}</div>
+          {!compact && <div className="text-xs text-slate-600 dark:text-slate-500">{node.location}</div>}
         </div>
       </div>
 
@@ -39,7 +39,7 @@ export default function NodeCard({
           const tc = tempColors[t];
           const TempIcon = tc.icon;
           return (
-            <span key={t} className={`${tc.bg} ${tc.text} px-1.5 py-0.5 rounded text-xs flex items-center gap-1`}>
+            <span key={t} className={`${tc.bg} ${tc.text} border ${tc.border} px-1.5 py-0.5 rounded text-xs flex items-center gap-1`}>
               <TempIcon className="w-3 h-3" />
               {t}
             </span>
@@ -49,13 +49,13 @@ export default function NodeCard({
 
       {/* Systems layer */}
       {showLayers.systems && !compact && (
-        <div className="mt-2 pt-2 border-t border-slate-700/50">
-          <div className="text-xs text-slate-500 mb-1 flex items-center gap-1">
+        <div className="mt-2 pt-2 border-t border-slate-400/50 dark:border-slate-700/50">
+          <div className="text-xs text-slate-600 dark:text-slate-500 mb-1 flex items-center gap-1">
             <Cpu className="w-3 h-3" /> Systems
           </div>
           <div className="flex flex-wrap gap-1">
             {node.systems.map(sys => (
-              <span key={sys} className="bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded text-xs">
+              <span key={sys} className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-1.5 py-0.5 rounded text-xs">
                 {sys}
               </span>
             ))}
@@ -65,13 +65,13 @@ export default function NodeCard({
 
       {/* Teams layer */}
       {showLayers.teams && !compact && (
-        <div className="mt-2 pt-2 border-t border-slate-700/50">
-          <div className="text-xs text-slate-500 mb-1 flex items-center gap-1">
+        <div className="mt-2 pt-2 border-t border-slate-400/50 dark:border-slate-700/50">
+          <div className="text-xs text-slate-600 dark:text-slate-500 mb-1 flex items-center gap-1">
             <Users className="w-3 h-3" /> Teams
           </div>
           <div className="flex flex-wrap gap-1">
             {[...new Set(node.systems.map(s => teamsData[s]?.name).filter(Boolean))].map(team => (
-              <span key={team} className="bg-indigo-900/40 text-indigo-300 px-1.5 py-0.5 rounded text-xs">
+              <span key={team} className="bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-1.5 py-0.5 rounded text-xs">
                 {team}
               </span>
             ))}

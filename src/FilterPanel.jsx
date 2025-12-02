@@ -15,18 +15,18 @@ export default function FilterPanel({
   const activeFilterCount = Object.values(filters).flat().length;
 
   return (
-    <aside className={`${isOpen ? 'w-72' : 'w-12'} border-r border-slate-800 bg-slate-900/30 transition-all flex-shrink-0`}>
+    <aside className={`${isOpen ? 'w-72' : 'w-12'} border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/30 transition-all flex-shrink-0`}>
       <button
         onClick={onToggle}
-        className="w-full p-3 flex items-center justify-between hover:bg-slate-800/50 transition-colors"
+        className="w-full p-3 flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors text-slate-950 dark:text-white"
       >
         <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-slate-400" />
+          <Filter className="w-4 h-4 text-slate-400 dark:text-slate-400" />
           {isOpen && <span className="text-sm font-medium">Filters</span>}
         </div>
         {isOpen && (
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500">
+            <span className="text-xs text-slate-600 dark:text-slate-500">
               {activeFilterCount} active
             </span>
             {activeFilterCount > 0 && (
@@ -35,7 +35,7 @@ export default function FilterPanel({
                   e.stopPropagation();
                   onClearFilters();
                 }}
-                className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                className="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
                 title="Clear all filters"
               >
                 ✕
@@ -49,7 +49,7 @@ export default function FilterPanel({
         <div className="p-4 space-y-6">
           {/* Temperature filter */}
           <div>
-            <div className="text-xs uppercase tracking-wider text-slate-500 mb-2">Temperature</div>
+            <div className="text-xs uppercase tracking-wider text-slate-600 dark:text-slate-500 mb-2">Temperature</div>
             <div className="flex flex-wrap gap-2">
               {Object.entries(tempColors).map(([temp, style]) => {
                 const TempIcon = style.icon;
@@ -70,7 +70,7 @@ export default function FilterPanel({
 
           {/* Operator filter */}
           <div>
-            <div className="text-xs uppercase tracking-wider text-slate-500 mb-2">Operator</div>
+            <div className="text-xs uppercase tracking-wider text-slate-600 dark:text-slate-500 mb-2">Operator</div>
             <div className="flex flex-wrap gap-2">
               {['Company A', 'Company B', 'None'].map(op => (
                 <FilterButton
@@ -93,7 +93,7 @@ export default function FilterPanel({
 
           {/* Node type filter */}
           <div>
-            <div className="text-xs uppercase tracking-wider text-slate-500 mb-2">Node Type</div>
+            <div className="text-xs uppercase tracking-wider text-slate-600 dark:text-slate-500 mb-2">Node Type</div>
             <div className="flex flex-wrap gap-2">
               {Object.entries(nodeStyles).map(([type, style]) => (
                 <FilterButton
@@ -111,7 +111,7 @@ export default function FilterPanel({
 
           {/* Layer toggles */}
           <div>
-            <div className="text-xs uppercase tracking-wider text-slate-500 mb-2">Layers</div>
+            <div className="text-xs uppercase tracking-wider text-slate-600 dark:text-slate-500 mb-2">Layers</div>
             <div className="space-y-2">
               {[
                 { key: 'systems', icon: Cpu, label: 'Systems' },
@@ -121,16 +121,16 @@ export default function FilterPanel({
                 <button
                   key={layer.key}
                   onClick={() => onToggleLayer(layer.key)}
-                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-colors"
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700/50 transition-colors text-slate-950 dark:text-white"
                 >
                   <div className="flex items-center gap-2">
-                    <layer.icon className="w-4 h-4 text-slate-400" />
-                    <span className="text-sm text-slate-300">{layer.label}</span>
+                    <layer.icon className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                    <span className="text-sm text-slate-700 dark:text-slate-300">{layer.label}</span>
                   </div>
                   {showLayers[layer.key] ? (
-                    <Eye className="w-4 h-4 text-cyan-400" />
+                    <Eye className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
                   ) : (
-                    <EyeOff className="w-4 h-4 text-slate-600" />
+                    <EyeOff className="w-4 h-4 text-slate-400 dark:text-slate-600" />
                   )}
                 </button>
               ))}

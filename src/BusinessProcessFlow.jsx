@@ -9,19 +9,19 @@ export default function BusinessProcessFlow({
   teamsData = {}
 }) {
   return (
-    <div className="bg-slate-900/60 rounded-lg border border-slate-700/50 overflow-hidden">
+    <div className="bg-slate-100 dark:bg-slate-900/60 rounded-lg border border-slate-300 dark:border-slate-700/50 overflow-hidden text-slate-950 dark:text-white">
       <button
         onClick={onToggle}
-        className="w-full px-4 py-3 flex items-center justify-between hover:bg-slate-800/50 transition-colors"
+        className="w-full px-4 py-3 flex items-center justify-between hover:bg-slate-200 dark:hover:bg-slate-800/50 transition-colors"
       >
         <div className="flex items-center gap-3">
-          <GitBranch className="w-4 h-4 text-slate-400" />
-          <span className="font-medium text-white">{process.name}</span>
-          <span className="text-xs text-slate-500 bg-slate-800 px-2 py-0.5 rounded">
+          <GitBranch className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+          <span className="font-medium text-slate-950 dark:text-white">{process.name}</span>
+          <span className="text-xs text-slate-600 dark:text-slate-500 bg-slate-200 dark:bg-slate-800 px-2 py-0.5 rounded">
             {process.steps.length} steps
           </span>
         </div>
-        {expanded ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
+        {expanded ? <ChevronDown className="w-4 h-4 text-slate-600 dark:text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-600 dark:text-slate-400" />}
       </button>
 
       {expanded && (
@@ -31,22 +31,22 @@ export default function BusinessProcessFlow({
               <div key={step.id} className="flex items-start gap-3 relative">
                 {/* Connector line */}
                 {idx < process.steps.length - 1 && (
-                  <div className="absolute left-[11px] top-6 w-0.5 h-full bg-slate-700" />
+                  <div className="absolute left-[11px] top-6 w-0.5 h-full bg-slate-300 dark:bg-slate-700" />
                 )}
 
                 {/* Step dot */}
-                <div className="w-6 h-6 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center text-xs text-slate-400 z-10 flex-shrink-0">
+                <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800 border-2 border-slate-400 dark:border-slate-600 flex items-center justify-center text-xs text-slate-600 dark:text-slate-400 z-10 flex-shrink-0">
                   {idx + 1}
                 </div>
 
                 <div className="flex-1 pb-4">
-                  <div className="text-sm font-medium text-white">{step.name}</div>
-                  <div className="text-xs text-slate-500 mt-0.5">{step.description}</div>
+                  <div className="text-sm font-medium text-slate-950 dark:text-white">{step.name}</div>
+                  <div className="text-xs text-slate-600 dark:text-slate-500 mt-0.5">{step.description}</div>
 
                   {showLayers.systems && (
                     <div className="flex flex-wrap gap-1 mt-2">
                       {step.systems.map(sys => (
-                        <span key={sys} className="bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded text-xs flex items-center gap-1">
+                        <span key={sys} className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-1.5 py-0.5 rounded text-xs flex items-center gap-1">
                           <Database className="w-3 h-3" />
                           {sys}
                         </span>
@@ -57,7 +57,7 @@ export default function BusinessProcessFlow({
                   {showLayers.teams && (
                     <div className="flex flex-wrap gap-1 mt-1">
                       {[...new Set(step.systems.map(s => teamsData[s]?.name).filter(Boolean))].map(team => (
-                        <span key={team} className="bg-indigo-900/40 text-indigo-300 px-1.5 py-0.5 rounded text-xs flex items-center gap-1">
+                        <span key={team} className="bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-1.5 py-0.5 rounded text-xs flex items-center gap-1">
                           <Users className="w-3 h-3" />
                           {team}
                         </span>

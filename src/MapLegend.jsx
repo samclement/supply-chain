@@ -12,8 +12,8 @@ const nodeTypeColors = {
 
 export default function MapLegend({ visibleNodes }) {
   return (
-    <div className="bg-slate-900/60 rounded-lg border border-slate-700/50 p-4">
-      <div className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+    <div className="bg-slate-100 dark:bg-slate-900/60 rounded-lg border border-slate-300 dark:border-slate-700/50 p-4 text-slate-950 dark:text-white">
+      <div className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
         <Map className="w-4 h-4" />
         Node Types
       </div>
@@ -28,8 +28,8 @@ export default function MapLegend({ visibleNodes }) {
                 className="w-full h-6 rounded mb-1 opacity-80"
                 style={{ backgroundColor: nodeTypeColors[type] }}
               ></div>
-              <div className="font-medium text-slate-300 capitalize">{type}</div>
-              <div className="text-slate-500">{typeNodes.length}</div>
+              <div className="font-medium text-slate-700 dark:text-slate-300 capitalize">{type}</div>
+              <div className="text-slate-600 dark:text-slate-500">{typeNodes.length}</div>
             </div>
           );
         })}
