@@ -2,3 +2,40 @@
 
 /* Use class-based dark mode with Tailwind v4 */
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Themed scrollbars (global). Adjust sizes/colors as desired. */
+:root {
+  --scroll-thumb: var(--color-slate-300);
+  --scroll-track: var(--color-slate-100);
+}
+:where(.dark, .dark *) {
+  --scroll-thumb: var(--color-slate-600);
+  --scroll-track: var(--color-slate-800);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+/* WebKit (Chrome/Edge/Safari) */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: var(--scroll-thumb);
+  border-radius: 9999px;
+  border: 2px solid var(--scroll-track);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-slate-400);
+}
+:where(.dark, .dark *) *::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-slate-500);
+}
+*::-webkit-scrollbar-track {
+  background-color: var(--scroll-track);
+  border-radius: 9999px;
+}
